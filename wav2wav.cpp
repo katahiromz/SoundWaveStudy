@@ -181,7 +181,7 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
     {
         printf("wav2wav --- Converts a wave file to a wave file\n");
         printf("Usage #1: txt2wav [options] wave-file-1.txt [wave-file-2.wav]\n");
-        printf("Usage #2: cat wave-file-1.wav | txt2wav [options] > wave-file-2.wav\n");
+        printf("Usage #2: cat wave-file-1.wav | wav2wav [options] > wave-file-2.wav\n");
         printf("Options:\n");
         printf("--help          Show this help.\n");
         printf("--version       Show version info.\n");
@@ -192,7 +192,7 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
 
     static void show_version(void)
     {
-        printf("wav2wav version 0.0 by katahiromz\n");
+        printf("wav2wav version 0.1 by katahiromz\n");
     }
 
     int main(int argc, char **argv)
