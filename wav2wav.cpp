@@ -24,7 +24,7 @@ bool mono_to_stereo(PcmWave& wave1, PcmWave& wave2)
     {
     case 8:
         wave2.set_info(2, wave1.mode(), wave1.sample_rate());
-        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
+        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             uint8_t value = wave1.data_8bit(i);
             wave2.push_8bit(value);
@@ -33,7 +33,7 @@ bool mono_to_stereo(PcmWave& wave1, PcmWave& wave2)
         break;
     case 16:
         wave2.set_info(2, wave1.mode(), wave1.sample_rate());
-        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
+        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             int16_t value = wave1.data_16bit(i);
             wave2.push_16bit(value);
@@ -121,7 +121,7 @@ bool mode_8bit_to_16bit(PcmWave& wave1, PcmWave& wave2)
     {
     case 1:
         wave2.set_info(1, 16, wave1.sample_rate());
-        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
+        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             int value = wave1.data_16bit(i);
             assert(0 <= value && value <= 255);
@@ -173,7 +173,7 @@ bool mode_16bit_to_8bit(PcmWave& wave1, PcmWave& wave2)
     {
     case 1:
         wave2.set_info(1, 8, wave1.sample_rate());
-        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
+        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             int value = wave1.data_16bit(i);
             assert(-32768 <= value && value <= 32767);
