@@ -387,8 +387,7 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
     static void show_help(void)
     {
         printf("wav2wav --- Converts a wave file to another wave file\n");
-        printf("Usage #1: txt2wav [options] wave-file-1.txt [wave-file-2.wav]\n");
-        printf("Usage #2: cat wave-file-1.wav | wav2wav [options] > wave-file-2.wav\n");
+        printf("Usage: txt2wav [options] wave-file-1.txt [wave-file-2.wav]\n");
         printf("Options:\n");
         printf("--help          Show this help.\n");
         printf("--version       Show version info.\n");

@@ -256,8 +256,7 @@ bool txt2wav(const char *txt_file, const char *wav_file, int sampling_rate)
     static void show_help(void)
     {
         printf("txt2wav --- Converts a text file to a wave file\n");
-        printf("Usage #1: txt2wav [options] text-file.txt [sound-file.wav]\n");
-        printf("Usage #2: cat text-file.txt | txt2wav [options] > sound-file.wav\n");
+        printf("Usage: txt2wav [options] text-file.txt [sound-file.wav]\n");
         printf("Options:\n");
         printf("--help      Show this help.\n");
         printf("--version   Show version info.\n");
