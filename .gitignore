@@ -30,3 +30,6 @@ ipch
 x64
 *-old
 *.skrold
+*.wav.txt
+*.wav.wav
+*.txt.wav
