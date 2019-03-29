@@ -1,5 +1,5 @@
 #ifndef PCM_WAVE_HPP_
-#define PCM_WAVE_HPP_     4   /* Version 4 */
+#define PCM_WAVE_HPP_     5   /* Version 5 */
 
 #if __cplusplus >= 201103L  /* C++11 */
     #include <cstdint>
@@ -117,6 +117,8 @@ typedef struct PCM_WAVE
 
         bool read_from_fp(std::FILE *fp);
         bool write_to_fp(std::FILE *fp) const;
+
+        float seconds() const;
 
     protected:
         PCM_WAVE m_wave;
@@ -546,6 +548,13 @@ typedef struct PCM_WAVE
     const int16_t& PcmWave::data_16bit(size_t index) const
     {
         return reinterpret_cast<const int16_t&>(m_data[index * sizeof(int16_t)]);
+    }
+
+    inline
+    float PcmWave::seconds() const
+    {
+        return float(m_wave.Subchunk2Size) / m_wave.NumChannels /
+               m_wave.SampleRate / (m_wave.BitsPerSample / 8); 
     }
 #endif  /* C++ */
 

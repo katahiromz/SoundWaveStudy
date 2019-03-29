@@ -12,6 +12,8 @@ static void show_info(const char *name, const PcmWave& wave)
 
 bool mono_to_stereo(PcmWave& wave1, PcmWave& wave2)
 {
+    wave2.clear();
+
     if (wave1.num_channels() != 1)
     {
         assert(0);
@@ -49,6 +51,8 @@ bool mono_to_stereo(PcmWave& wave1, PcmWave& wave2)
 
 bool stereo_to_mono(PcmWave& wave1, PcmWave& wave2)
 {
+    wave2.clear();
+
     if (wave1.num_channels() != 2)
     {
         assert(0);
@@ -105,19 +109,59 @@ bool mode_8bit_to_16bit(PcmWave& wave1, PcmWave& wave2)
 {
     interpolation_test();
 
+    wave2.clear();
+
     if (wave1.mode() != 8)
     {
         assert(0);
         return false;
     }
 
-    // TODO:
-    return false;
+    switch (wave1.num_channels())
+    {
+    case 1:
+        wave2.set_info(1, 16, wave1.sample_rate());
+        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
+        {
+            int value = wave1.data_16bit(i);
+            assert(0 <= value && value <= 255);
+            // [0, 255] --> [-32768, 32767]
+            value = linear_interpolation(value, 0, 255, -32768, 32767);
+            assert(-32768 <= value && value <= 32767);
+            wave2.push_16bit(int16_t(value));
+        }
+        break;
+    case 2:
+        wave2.set_info(2, 16, wave1.sample_rate());
+        for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
+        {
+            int left = wave1.data_16bit(i);
+            int right = wave1.data_16bit(i + 1);
+            assert(0 <= left && left <= 255);
+            assert(0 <= right && right <= 255);
+            // [0, 255] --> [-32768, 32767]
+            left = linear_interpolation(left, 0, 255, -32768, 32767);
+            right = linear_interpolation(right, 0, 255, -32768, 32767);
+            assert(-32768 <= left && left <= 32767);
+            assert(-32768 <= right && right <= 32767);
+            wave2.push_16bit(int16_t(left));
+            wave2.push_16bit(int16_t(right));
+        }
+        break;
+    default:
+        assert(0);
+        return false;
+    }
+
+    wave2.update_info();
+    return true;
 }
 
 bool mode_16bit_to_8bit(PcmWave& wave1, PcmWave& wave2)
 {
     interpolation_test();
+
+    wave2.clear();
 
     if (wave1.mode() != 16)
     {
@@ -245,6 +289,17 @@ bool wav2wav_fp(const char *in, const char *out, FILE *fin, FILE *fout, W2W& w2w
         break;
     }
 
+    if (!flag)
+    {
+        fprintf(stderr, "ERROR: %s: Unable to convert.\n", in);
+        return false;
+    }
+
+    if (w2w.sampling_rate)
+    {
+        wave2.sample_rate(w2w.sampling_rate);
+    }
+
     show_info(out, wave3);
     assert(wave3.is_valid());
 
@@ -335,7 +390,7 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
 
     static void show_version(void)
     {
-        printf("wav2wav version 0.1 by katahiromz\n");
+        printf("wav2wav version 0.2 by katahiromz\n");
     }
 
     int main(int argc, char **argv)
