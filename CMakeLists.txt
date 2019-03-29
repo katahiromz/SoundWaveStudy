@@ -24,7 +24,7 @@ add_executable(wav2wav wav2wav.cpp)
 target_compile_definitions(wav2wav PRIVATE -DWAV2WAV)
 
 # play.exe
-add_executable(play WIN32 play.cpp)
+add_executable(play play.cpp)
 target_link_libraries(play PRIVATE winmm)
 
 ##############################################################################
