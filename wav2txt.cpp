@@ -106,29 +106,20 @@ bool wav2txt(const char *wav_file, const char *txt_file)
         return false;
     }
 
-    if (txt_file)
+    char out_name[256];
+    if (!txt_file)
     {
-        fout = fopen(txt_file, "w");
-        if (!fout)
-        {
-            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", txt_file);
-            fclose(fin);
-            return false;
-        }
-    }
-    else
-    {
-        static char out_name[128];
         strcpy(out_name, wav_file);
         strcat(out_name, ".txt");
         txt_file = out_name;
-        fout = fopen(out_name, "wb");
-        if (!fout)
-        {
-            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
-            fclose(fin);
-            return false;
-        }
+    }
+
+    fout = fopen(txt_file, "w");
+    if (!fout)
+    {
+        fprintf(stderr, "ERROR: Unable to open file '%s'.\n", txt_file);
+        fclose(fin);
+        return false;
     }
 
     bool ret = wav2txt_fp(wav_file, txt_file, fin, fout);

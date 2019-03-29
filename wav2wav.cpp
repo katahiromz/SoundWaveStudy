@@ -335,29 +335,20 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
         return false;
     }
 
-    if (file2)
+    char out_name[256];
+    if (!file2)
     {
-        fout = fopen(file2, "wb");
-        if (!fout)
-        {
-            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", file2);
-            fclose(fin);
-            return false;
-        }
-    }
-    else
-    {
-        static char out_name[128];
         strcpy(out_name, file1);
         strcat(out_name, ".wav");
         file2 = out_name;
-        fout = fopen(out_name, "wb");
-        if (!fout)
-        {
-            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
-            fclose(fin);
-            return false;
-        }
+    }
+
+    fout = fopen(file2, "wb");
+    if (!fout)
+    {
+        fprintf(stderr, "ERROR: Unable to open file '%s'.\n", file2);
+        fclose(fin);
+        return false;
     }
 
     bool ret = wav2wav_fp(file1, file2, fin, fout, w2w);
