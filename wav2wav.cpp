@@ -297,7 +297,7 @@ bool wav2wav_fp(const char *in, const char *out, FILE *fin, FILE *fout, W2W& w2w
 
     if (w2w.sampling_rate)
     {
-        wave2.sample_rate(w2w.sampling_rate);
+        wave3.sample_rate(w2w.sampling_rate);
     }
 
     show_info(out, wave3);
