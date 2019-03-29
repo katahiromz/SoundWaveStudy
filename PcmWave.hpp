@@ -1,5 +1,5 @@
 #ifndef PCM_WAVE_HPP_
-#define PCM_WAVE_HPP_     3   /* Version 3 */
+#define PCM_WAVE_HPP_     4   /* Version 4 */
 
 #if __cplusplus >= 201103L  /* C++11 */
     #include <cstdint>
@@ -61,6 +61,8 @@ typedef struct PCM_WAVE
                 uint16_t BitsPerSample_ = PCM_WAVE_DEFAULT_BITSPERSAMPLE,
                 uint32_t SampleRate_ = PCM_WAVE_DEFAULT_SAMPLE_RATE,
                 const void *data = NULL, size_t data_size = 0);
+        PcmWave(PcmWave&& wave);
+        PcmWave& operator=(PcmWave&& wave);
 
         bool load_from_file(const char *file);
         bool save_to_file(const char *file) const;
@@ -129,6 +131,21 @@ typedef struct PCM_WAVE
     {
         set_info(NumChannels_, BitsPerSample_, SampleRate_);
         set_data(data, data_size);
+    }
+
+    inline
+    PcmWave::PcmWave(PcmWave&& wave)
+    {
+        m_wave = wave.m_wave;
+        m_data = std::move(wave.m_data);
+    }
+
+    inline
+    PcmWave& PcmWave::operator=(PcmWave&& wave)
+    {
+        m_wave = wave.m_wave;
+        m_data = std::move(wave.m_data);
+        return *this;
     }
 
     inline
