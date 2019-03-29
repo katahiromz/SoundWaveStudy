@@ -23,8 +23,10 @@ target_compile_definitions(txt2wav PRIVATE -DTXT2WAV)
 add_executable(wav2wav wav2wav.cpp)
 target_compile_definitions(wav2wav PRIVATE -DWAV2WAV)
 
-# play.exe
-add_executable(play play.cpp)
-target_link_libraries(play PRIVATE winmm)
+if (WIN32)
+    # play.exe
+    add_executable(play play.cpp)
+    target_link_libraries(play PRIVATE winmm)
+endif()
 
 ##############################################################################
