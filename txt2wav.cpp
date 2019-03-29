@@ -152,8 +152,6 @@ bool txt2wav_fp(const char *in, const char *out, FILE *fin, FILE *fout, int samp
 
     PcmWave wave(channels, mode, sampling_rate);
 
-    show_info(in, wave);
-
     bool flag = false;
     switch (channels)
     {
@@ -181,6 +179,8 @@ bool txt2wav_fp(const char *in, const char *out, FILE *fin, FILE *fout, int samp
         break;
     }
 
+    show_info(in, wave);
+
     if (!wave.write_to_fp(fout))
     {
         fprintf(stderr, "ERROR: %s: Unable to write.\n", out);
@@ -196,19 +196,12 @@ bool txt2wav(const char *txt_file, const char *wav_file, int sampling_rate)
 {
     FILE *fin, *fout;
 
-    if (txt_file)
+    assert(txt_file);
+    fin = fopen(txt_file, "r");
+    if (!fin)
     {
-        fin = fopen(txt_file, "r");
-        if (!fin)
-        {
-            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", txt_file);
-            return false;
-        }
-    }
-    else
-    {
-        txt_file = "stdin";
-        fin = stdin;
+        fprintf(stderr, "ERROR: Unable to open file '%s'.\n", txt_file);
+        return false;
     }
 
     if (wav_file)
@@ -223,24 +216,16 @@ bool txt2wav(const char *txt_file, const char *wav_file, int sampling_rate)
     }
     else
     {
-        if (txt_file)
+        static char out_name[128];
+        strcpy(out_name, txt_file);
+        strcat(out_name, ".wav");
+        wav_file = out_name;
+        fout = fopen(out_name, "wb");
+        if (!fout)
         {
-            static char out_name[128];
-            strcpy(out_name, txt_file);
-            strcat(out_name, ".wav");
-            wav_file = out_name;
-            fout = fopen(out_name, "wb");
-            if (!fout)
-            {
-                fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
-                fclose(fin);
-                return false;
-            }
-        }
-        else
-        {
-            wav_file = "stdout";
-            fout = stdout;
+            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
+            fclose(fin);
+            return false;
         }
     }
 
@@ -265,7 +250,7 @@ bool txt2wav(const char *txt_file, const char *wav_file, int sampling_rate)
 
     static void show_version(void)
     {
-        printf("txt2wav version 0.0 by katahiromz\n");
+        printf("txt2wav version 0.4 by katahiromz\n");
     }
 
     int main(int argc, char **argv)
@@ -274,9 +259,8 @@ bool txt2wav(const char *txt_file, const char *wav_file, int sampling_rate)
 
         if (argc <= 1)
         {
-            if (bool ret = txt2wav_fp("stdin", "stdout", stdin, stdout, sampling_rate))
-                return EXIT_SUCCESS;
-            return EXIT_FAILURE;
+            show_help();
+            return EXIT_SUCCESS;
         }
 
         const char *arg1 = NULL;
@@ -328,6 +312,12 @@ bool txt2wav(const char *txt_file, const char *wav_file, int sampling_rate)
                 fprintf(stderr, "ERROR: Too many argument.\n");
                 return EXIT_FAILURE;
             }
+        }
+
+        if (arg1 == NULL)
+        {
+            fprintf(stderr, "ERROR: No input file.\n");
+            return EXIT_FAILURE;
         }
 
         return txt2wav(arg1, arg2, sampling_rate) ? EXIT_SUCCESS : EXIT_FAILURE;

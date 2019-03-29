@@ -327,19 +327,12 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
 {
     FILE *fin, *fout;
 
-    if (file1)
+    assert(file1);
+    fin = fopen(file1, "rb");
+    if (!fin)
     {
-        fin = fopen(file1, "rb");
-        if (!fin)
-        {
-            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", file1);
-            return false;
-        }
-    }
-    else
-    {
-        file1 = "stdin";
-        fin = stdin;
+        fprintf(stderr, "ERROR: Unable to open file '%s'.\n", file1);
+        return false;
     }
 
     if (file2)
@@ -354,24 +347,16 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
     }
     else
     {
-        if (file1)
+        static char out_name[128];
+        strcpy(out_name, file1);
+        strcat(out_name, ".wav");
+        file2 = out_name;
+        fout = fopen(out_name, "wb");
+        if (!fout)
         {
-            static char out_name[128];
-            strcpy(out_name, file1);
-            strcat(out_name, ".wav");
-            file2 = out_name;
-            fout = fopen(out_name, "wb");
-            if (!fout)
-            {
-                fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
-                fclose(fin);
-                return false;
-            }
-        }
-        else
-        {
-            file2 = "stdout";
-            fout = stdout;
+            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
+            fclose(fin);
+            return false;
         }
     }
 
@@ -398,7 +383,7 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
 
     static void show_version(void)
     {
-        printf("wav2wav version 0.3 by katahiromz\n");
+        printf("wav2wav version 0.4 by katahiromz\n");
     }
 
     int main(int argc, char **argv)
@@ -407,9 +392,8 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
 
         if (argc <= 1)
         {
-            if (bool ret = wav2wav_fp("stdin", "stdout", stdin, stdout, w2w))
-                return EXIT_SUCCESS;
-            return EXIT_FAILURE;
+            show_help();
+            return EXIT_SUCCESS;
         }
 
         const char *arg1 = NULL;
@@ -493,6 +477,12 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
                 fprintf(stderr, "ERROR: Too many argument.\n");
                 return EXIT_FAILURE;
             }
+        }
+
+        if (arg1 == NULL)
+        {
+            fprintf(stderr, "ERROR: No input file.\n");
+            return EXIT_FAILURE;
         }
 
         return wav2wav(arg1, arg2, w2w) ? EXIT_SUCCESS : EXIT_FAILURE;

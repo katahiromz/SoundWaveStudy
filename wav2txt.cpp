@@ -98,19 +98,12 @@ bool wav2txt(const char *wav_file, const char *txt_file)
 {
     FILE *fin, *fout;
 
-    if (wav_file)
+    assert(wav_file);
+    fin = fopen(wav_file, "rb");
+    if (!fin)
     {
-        fin = fopen(wav_file, "rb");
-        if (!fin)
-        {
-            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", wav_file);
-            return false;
-        }
-    }
-    else
-    {
-        fin = stdin;
-        wav_file = "stdin";
+        fprintf(stderr, "ERROR: Unable to open file '%s'.\n", wav_file);
+        return false;
     }
 
     if (txt_file)
@@ -125,24 +118,16 @@ bool wav2txt(const char *wav_file, const char *txt_file)
     }
     else
     {
-        if (wav_file)
+        static char out_name[128];
+        strcpy(out_name, wav_file);
+        strcat(out_name, ".txt");
+        txt_file = out_name;
+        fout = fopen(out_name, "wb");
+        if (!fout)
         {
-            static char out_name[128];
-            strcpy(out_name, wav_file);
-            strcat(out_name, ".txt");
-            txt_file = out_name;
-            fout = fopen(out_name, "wb");
-            if (!fout)
-            {
-                fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
-                fclose(fin);
-                return false;
-            }
-        }
-        else
-        {
-            fout = stdout;
-            txt_file = "stdout";
+            fprintf(stderr, "ERROR: Unable to open file '%s'.\n", out_name);
+            fclose(fin);
+            return false;
         }
     }
 
@@ -170,16 +155,15 @@ bool wav2txt(const char *wav_file, const char *txt_file)
 
     static void show_version(void)
     {
-        printf("wav2txt version 0.0 by katahiromz\n");
+        printf("wav2txt version 0.4 by katahiromz\n");
     }
 
     int main(int argc, char **argv)
     {
         if (argc <= 1)
         {
-            if (bool ret = wav2txt_fp("stdin", "stdout", stdin, stdout))
-                return EXIT_SUCCESS;
-            return EXIT_FAILURE;
+            show_help();
+            return EXIT_SUCCESS;
         }
 
         const char *arg1 = NULL;
@@ -215,6 +199,12 @@ bool wav2txt(const char *wav_file, const char *txt_file)
                 fprintf(stderr, "ERROR: Too many argument.\n");
                 return EXIT_FAILURE;
             }
+        }
+
+        if (arg1 == NULL)
+        {
+            fprintf(stderr, "ERROR: No input file.\n");
+            return EXIT_FAILURE;
         }
 
         return wav2txt(arg1, arg2) ? EXIT_SUCCESS : EXIT_FAILURE;

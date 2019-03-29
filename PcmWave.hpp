@@ -1,5 +1,5 @@
 #ifndef PCM_WAVE_HPP_
-#define PCM_WAVE_HPP_     6   /* Version 6 */
+#define PCM_WAVE_HPP_     7   /* Version 7 */
 
 #if __cplusplus >= 201103L  /* C++11 */
     #include <cstdint>
@@ -167,7 +167,6 @@ typedef struct PCM_WAVE
                 }
             }
         }
-
         clear();
         return false;
     }
