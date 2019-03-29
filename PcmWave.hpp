@@ -1,5 +1,5 @@
 #ifndef PCM_WAVE_HPP_
-#define PCM_WAVE_HPP_     5   /* Version 5 */
+#define PCM_WAVE_HPP_     6   /* Version 6 */
 
 #if __cplusplus >= 201103L  /* C++11 */
     #include <cstdint>
