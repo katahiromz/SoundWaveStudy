@@ -10,7 +10,7 @@ static void show_info(const char *name, const PcmWave& wave)
             wave.mode(), wave.num_channels(), wave.seconds());
 }
 
-bool mono_to_stereo(PcmWave& wave1, PcmWave& wave2)
+bool mono_to_stereo(const PcmWave& wave1, PcmWave& wave2)
 {
     wave2.clear();
 
@@ -51,7 +51,7 @@ bool mono_to_stereo(PcmWave& wave1, PcmWave& wave2)
     return true;
 }
 
-bool stereo_to_mono(PcmWave& wave1, PcmWave& wave2)
+bool stereo_to_mono(const PcmWave& wave1, PcmWave& wave2)
 {
     wave2.clear();
 
@@ -109,7 +109,7 @@ inline void interpolation_test(void)
     assert(linear_interpolation(32767, -32768, 32767, 0, 255) == 255);
 }
 
-bool mode_8bit_to_16bit(PcmWave& wave1, PcmWave& wave2)
+bool mode_8bit_to_16bit(const PcmWave& wave1, PcmWave& wave2)
 {
     interpolation_test();
 
@@ -163,7 +163,7 @@ bool mode_8bit_to_16bit(PcmWave& wave1, PcmWave& wave2)
     return true;
 }
 
-bool mode_16bit_to_8bit(PcmWave& wave1, PcmWave& wave2)
+bool mode_16bit_to_8bit(const PcmWave& wave1, PcmWave& wave2)
 {
     interpolation_test();
 
