@@ -5,7 +5,7 @@
 
 static void show_info(const char *name, const PcmWave& wave)
 {
-    fprintf(stderr, "%s: %ld Hz sampling, %d-bit, %d channel (%.1f seconds)\n",
+    fprintf(stderr, "%s: %ld Hz sampling, %d-bit, %d channel (%.2f seconds)\n",
             name, wave.sample_rate(),
             wave.mode(), wave.num_channels(), wave.seconds());
 }
@@ -20,11 +20,12 @@ bool mono_to_stereo(const PcmWave& wave1, PcmWave& wave2)
         return false;
     }
 
+    wave2.reserve(wave1.num_units() * wave1.num_channels() * 2);
+
     switch (wave1.mode())
     {
     case 8:
         wave2.set_info(2, wave1.mode(), wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() * 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             uint8_t value = wave1.data_8bit(i);
@@ -34,7 +35,6 @@ bool mono_to_stereo(const PcmWave& wave1, PcmWave& wave2)
         break;
     case 16:
         wave2.set_info(2, wave1.mode(), wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() * 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             int16_t value = wave1.data_16bit(i);
@@ -61,11 +61,12 @@ bool stereo_to_mono(const PcmWave& wave1, PcmWave& wave2)
         return false;
     }
 
+    wave2.reserve(wave1.num_units() * wave1.num_channels() / 2);
+
     switch (wave1.mode())
     {
     case 8:
         wave2.set_info(1, wave1.mode(), wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() / 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
         {
             int left = wave1.data_8bit(i);
@@ -76,7 +77,6 @@ bool stereo_to_mono(const PcmWave& wave1, PcmWave& wave2)
         break;
     case 16:
         wave2.set_info(1, wave1.mode(), wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() / 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
         {
             int left = wave1.data_16bit(i);
@@ -121,11 +121,12 @@ bool mode_8bit_to_16bit(const PcmWave& wave1, PcmWave& wave2)
         return false;
     }
 
+    wave2.reserve(wave1.num_units() * wave1.num_channels() * 2);
+
     switch (wave1.num_channels())
     {
     case 1:
         wave2.set_info(1, 16, wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() * 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             int value = wave1.data_16bit(i);
@@ -138,7 +139,6 @@ bool mode_8bit_to_16bit(const PcmWave& wave1, PcmWave& wave2)
         break;
     case 2:
         wave2.set_info(2, 16, wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() * 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
         {
             int left = wave1.data_16bit(i);
@@ -175,11 +175,12 @@ bool mode_16bit_to_8bit(const PcmWave& wave1, PcmWave& wave2)
         return false;
     }
 
+    wave2.reserve(wave1.num_units() * wave1.num_channels() / 2);
+
     switch (wave1.num_channels())
     {
     case 1:
         wave2.set_info(1, 8, wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() / 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); ++i)
         {
             int value = wave1.data_16bit(i);
@@ -192,7 +193,6 @@ bool mode_16bit_to_8bit(const PcmWave& wave1, PcmWave& wave2)
         break;
     case 2:
         wave2.set_info(2, 8, wave1.sample_rate());
-        wave2.reserve(wave1.num_units() * wave1.num_channels() / 2);
         for (size_t i = 0; i < wave1.num_units() * wave1.num_channels(); i += 2)
         {
             int left = wave1.data_16bit(i);
@@ -374,7 +374,7 @@ bool wav2wav(const char *file1, const char *file2, W2W& w2w)
 
     static void show_version(void)
     {
-        printf("wav2wav version 0.4 by katahiromz\n");
+        printf("wav2wav version 0.5 by katahiromz\n");
     }
 
     int main(int argc, char **argv)

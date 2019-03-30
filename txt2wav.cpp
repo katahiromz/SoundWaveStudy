@@ -7,7 +7,7 @@
 
 static void show_info(const char *name, const PcmWave& wave)
 {
-    fprintf(stderr, "%s: %ld Hz sampling, %d-bit, %d channel (%.1f seconds)\n",
+    fprintf(stderr, "%s: %ld Hz sampling, %d-bit, %d channel (%.2f seconds)\n",
             name, wave.sample_rate(),
             wave.mode(), wave.num_channels(), wave.seconds());
 }
