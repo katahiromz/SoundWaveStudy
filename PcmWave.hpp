@@ -1,5 +1,5 @@
 #ifndef PCM_WAVE_HPP_
-#define PCM_WAVE_HPP_     7   /* Version 7 */
+#define PCM_WAVE_HPP_     8   /* Version 8 */
 
 #if __cplusplus >= 201103L  /* C++11 */
     #include <cstdint>
@@ -57,10 +57,14 @@ typedef struct PCM_WAVE
     public:
         typedef std::vector<uint8_t> data_type;
 
-        PcmWave(uint16_t NumChannels_ = PCM_WAVE_DEFAULT_CHANNELS,
-                uint16_t BitsPerSample_ = PCM_WAVE_DEFAULT_BITSPERSAMPLE,
-                uint32_t SampleRate_ = PCM_WAVE_DEFAULT_SAMPLE_RATE,
-                const void *data = NULL, size_t data_size = 0);
+        PcmWave();
+        PcmWave(uint16_t NumChannels_,
+                uint16_t BitsPerSample_,
+                uint32_t SampleRate_);
+        PcmWave(uint16_t NumChannels_,
+                uint16_t BitsPerSample_,
+                uint32_t SampleRate_,
+                const void *data, size_t data_size);
         PcmWave(PcmWave&& wave);
         PcmWave& operator=(PcmWave&& wave);
 
@@ -124,6 +128,20 @@ typedef struct PCM_WAVE
         PCM_WAVE m_wave;
         std::vector<uint8_t> m_data;
     }; // class PcmWave
+
+    inline
+    PcmWave::PcmWave()
+    {
+        // no init
+    }
+
+    inline
+    PcmWave::PcmWave(uint16_t NumChannels_,
+                     uint16_t BitsPerSample_,
+                     uint32_t SampleRate_)
+    {
+        set_info(NumChannels_, BitsPerSample_, SampleRate_);
+    }
 
     inline
     PcmWave::PcmWave(uint16_t NumChannels_,
